@@ -1,0 +1,576 @@
+/* ── Theme tokens (dark is the default; html.light overrides) ── */
+:root {
+  --bg: #0b0d10;
+  --panel: #0f1319;
+  --panel-2: #12171f;
+  --border: #222833;
+  --fg: #e6e8eb;
+  --muted: #9aa4b2;
+  --link: #7aa2f7;
+  --accent: #7aa2f7;
+  --code-bg: #0d1117;
+  --shiki-bg: var(--shiki-dark-bg, #0d1117);
+  color-scheme: dark;
+}
+
+html.light {
+  --bg: #ffffff;
+  --panel: #f7f8fa;
+  --panel-2: #f0f2f5;
+  --border: #e5e7eb;
+  --fg: #1a1d21;
+  --muted: #5b6472;
+  --link: #2563eb;
+  --accent: #2563eb;
+  --code-bg: #f6f8fa;
+  --shiki-bg: var(--shiki-light-bg, #f6f8fa);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter,
+    sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+code,
+pre,
+kbd {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ── Shell layout ── */
+.nb-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+.nb-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 1.25rem 1rem;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+}
+.nb-brand {
+  display: block;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+.nb-main-col {
+  min-width: 0;
+}
+.nb-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px);
+  z-index: 5;
+}
+.nb-theme-toggle {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  font-size: 15px;
+}
+.nb-main {
+  padding: 2rem 1.5rem 5rem;
+}
+
+/* ── Sidebar tree ── */
+.nb-tree,
+.nb-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nb-tree ul {
+  margin-left: 0.75rem;
+  border-left: 1px solid var(--border);
+  padding-left: 0.6rem;
+}
+.nb-tree li {
+  margin: 0.15rem 0;
+}
+.nb-tree-topic-link {
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.nb-tree-icon {
+  margin-right: 0.35rem;
+}
+.nb-tree-note a {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.nb-tree-note a:hover {
+  color: var(--link);
+}
+
+/* ── Content width ── */
+.nb-home,
+.nb-topic-page {
+  max-width: 52rem;
+  margin: 0 auto;
+}
+.nb-note-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  gap: 2.5rem;
+  max-width: 62rem;
+  margin: 0 auto;
+}
+.nb-article {
+  min-width: 0;
+}
+
+/* ── Headings & prose ── */
+.nb-title {
+  font-size: 2rem;
+  margin: 0.3rem 0 0.4rem;
+}
+.nb-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0 0 1.75rem;
+}
+.nb-lede {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+.nb-heading {
+  scroll-margin-top: 5rem;
+  position: relative;
+}
+.nb-anchor {
+  position: absolute;
+  left: -1.1rem;
+  color: var(--muted);
+  opacity: 0;
+  text-decoration: none;
+}
+.nb-heading:hover .nb-anchor {
+  opacity: 1;
+}
+.nb-prose :first-child {
+  margin-top: 0;
+}
+.nb-prose img {
+  max-width: 100%;
+}
+.nb-prose a {
+  text-decoration: underline;
+}
+
+/* ── Code (Shiki dual theme) ── */
+.nb-code {
+  margin: 1.25rem 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--shiki-bg);
+}
+.nb-code-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-2);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.nb-code-body {
+  overflow-x: auto;
+}
+.nb-code-body pre.shiki {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  background: transparent !important;
+  font-size: 0.86rem;
+}
+.nb-copy {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.nb-copy:hover {
+  color: var(--fg);
+}
+/* Shiki: pick the light/dark CSS-variable colors per theme */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+html.dark .shiki,
+html.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+/* ── Callouts ── */
+.nb-callout {
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 1.25rem 0;
+  background: var(--panel);
+}
+.nb-callout-title {
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+}
+.nb-callout-info {
+  border-left-color: #3b82f6;
+}
+.nb-callout-tip {
+  border-left-color: #22c55e;
+}
+.nb-callout-note {
+  border-left-color: #8b95a5;
+}
+.nb-callout-warning {
+  border-left-color: #f59e0b;
+}
+.nb-callout-error {
+  border-left-color: #ef4444;
+}
+
+/* ── Quote, list, todo, table, divider ── */
+.nb-quote {
+  border-left: 3px solid var(--border);
+  margin: 1.25rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--muted);
+}
+.nb-cite {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+}
+.nb-list {
+  padding-left: 1.4rem;
+}
+.nb-todo {
+  list-style: none;
+  padding-left: 0;
+}
+.nb-todo li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+.nb-todo li.done span {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.nb-table-wrap {
+  overflow-x: auto;
+  margin: 1.25rem 0;
+}
+.nb-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+}
+.nb-table th,
+.nb-table td {
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.7rem;
+  text-align: left;
+}
+.nb-table th {
+  background: var(--panel-2);
+}
+.nb-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+/* ── Mermaid & tabs ── */
+.nb-mermaid,
+.nb-tabs {
+  margin: 1.25rem 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.nb-tablist {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-2);
+}
+.nb-tablist button {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.nb-tablist button.active {
+  color: var(--fg);
+  background: var(--bg);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.nb-tabpanel {
+  padding: 1rem;
+}
+.nb-mermaid-diagram {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+.nb-mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+.nb-mermaid-loading,
+.nb-mermaid-error {
+  padding: 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.nb-mermaid-error {
+  color: #ef4444;
+}
+.nb-mermaid-splitgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.nb-mermaid-source .nb-code-body {
+  border-top: 1px solid var(--border);
+}
+.nb-mermaid figcaption,
+.nb-figure figcaption {
+  padding: 0.5rem 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+/* ── Columns, details, figures, embeds ── */
+.nb-columns {
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.nb-details {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  margin: 1.25rem 0;
+}
+.nb-details summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.nb-figure {
+  margin: 1.25rem 0;
+}
+.nb-figure img,
+.nb-figure video {
+  max-width: 100%;
+  border-radius: 8px;
+}
+.nb-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+.nb-embed-video {
+  position: relative;
+  padding-top: 56.25%;
+}
+.nb-embed-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 8px;
+}
+.nb-embed-note,
+.nb-collection {
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 1.25rem 0;
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+.nb-embed-note-label,
+.nb-collection-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.nb-file {
+  display: inline-flex;
+  gap: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+}
+.nb-block-error {
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* ── Math ── */
+.nb-math-block {
+  overflow-x: auto;
+  margin: 1.25rem 0;
+}
+
+/* ── TOC ── */
+.nb-toc {
+  position: sticky;
+  top: 5rem;
+  align-self: start;
+  font-size: 0.85rem;
+}
+.nb-toc-title {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.nb-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid var(--border);
+}
+.nb-toc li {
+  padding: 0.15rem 0 0.15rem 0.75rem;
+}
+.nb-toc-l3 {
+  padding-left: 1.5rem !important;
+}
+.nb-toc a {
+  color: var(--muted);
+}
+.nb-toc a:hover {
+  color: var(--link);
+}
+
+/* ── Cards & lists ── */
+.nb-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 2rem;
+}
+.nb-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  background: var(--panel);
+  color: var(--fg);
+}
+.nb-card:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+.nb-card-title {
+  font-weight: 600;
+}
+.nb-card-desc {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.nb-note-list {
+  list-style: none;
+  padding: 0;
+}
+.nb-note-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.nb-note-summary {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.nb-breadcrumbs {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+.nb-breadcrumbs .nb-sep {
+  margin: 0 0.4rem;
+  color: var(--border);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .nb-shell {
+    grid-template-columns: 1fr;
+  }
+  .nb-sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .nb-note-layout {
+    grid-template-columns: 1fr;
+  }
+  .nb-toc {
+    display: none;
+  }
+  .nb-mermaid-splitgrid {
+    grid-template-columns: 1fr;
+  }
+}
