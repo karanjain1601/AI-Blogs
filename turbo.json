@@ -3,7 +3,29 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_GISCUS_REPO",
+        "NEXT_PUBLIC_GISCUS_REPO_ID",
+        "NEXT_PUBLIC_GISCUS_CATEGORY",
+        "NEXT_PUBLIC_GISCUS_CATEGORY_ID",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "REVALIDATE_SECRET",
+        "CRON_SECRET",
+        "UPSTASH_REDIS_REST_URL",
+        "UPSTASH_REDIS_REST_TOKEN",
+        "GITHUB_BACKUP_TOKEN",
+        "GITHUB_BACKUP_REPO",
+        "GITHUB_BACKUP_BRANCH",
+        "ADMIN_USERNAME",
+        "ADMIN_PASSWORD_HASH",
+        "SESSION_SECRET",
+        "ADMIN_TOTP_SECRET",
+        "WEB_REVALIDATE_URL"
+      ]
     },
     "dev": {
       "cache": false,
@@ -12,6 +34,7 @@
     "lint": {},
     "typecheck": {
       "dependsOn": ["^build"]
-    }
+    },
+    "test": {}
   }
 }
