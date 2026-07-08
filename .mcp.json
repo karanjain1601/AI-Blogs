@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "notes-kb": {
+      "command": "node",
+      "args": ["--loader", "tsx/esm", "apps/mcp/src/index.ts"],
+      "env": {
+        "SUPABASE_URL": "",
+        "SUPABASE_SERVICE_ROLE_KEY": "",
+        "WEB_REVALIDATE_URL": "http://localhost:3000/api/revalidate",
+        "REVALIDATE_SECRET": ""
+      }
+    }
+  }
+}

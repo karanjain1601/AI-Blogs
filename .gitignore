@@ -1,0 +1,65 @@
+# ───────────────────────── dependencies ─────────────────────────
+node_modules/
+.pnpm-store/
+
+# ───────────────────────── env & secrets ────────────────────────
+# Public repo — never commit real env files or credentials.
+# The empty template .env.example is intentionally kept.
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.cer
+*.crt
+*.keystore
+*.jks
+*.mobileprovision
+id_rsa*
+*service-account*.json
+*credentials*.json
+secrets/
+.secrets/
+
+# ───────────────────────── builds / caches ──────────────────────
+.next/
+out/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+.cache/
+
+# ───────────────────────── expo / react native ──────────────────
+.expo/
+web-build/
+*.orig.*
+/apps/mobile/ios/
+/apps/mobile/android/
+
+# ───────────────────────── testing ──────────────────────────────
+coverage/
+.nyc_output/
+
+# ───────────────────────── vercel ───────────────────────────────
+.vercel
+
+# ───────────────────────── logs ─────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+logs/
+
+# ───────────────────────── editors / OS ─────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
