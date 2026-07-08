@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "notes-kb": {
+      "command": "npx",
+      "args": ["tsx", "apps/mcp/src/index.ts"],
+      "env": {
+        "SUPABASE_URL": "https://pfmfpekzvzfejgmppibq.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "${env:SUPABASE_SERVICE_ROLE_KEY}",
+        "WEB_REVALIDATE_URL": "${env:WEB_REVALIDATE_URL}",
+        "REVALIDATE_SECRET": "${env:REVALIDATE_SECRET}"
+      }
+    }
+  }
+}
