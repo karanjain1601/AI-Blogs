@@ -9,12 +9,16 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "test": "pnpm -r --if-present test"
   },
   "devDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.1.4",
+    "@types/node": "^20.17.10",
+    "sharp": "^0.35.3",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
-    "@types/node": "^20.17.10"
+    "vitest": "^4.1.10"
   },
   "pnpm": {
     "overrides": {

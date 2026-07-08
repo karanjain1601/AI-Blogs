@@ -4,7 +4,7 @@ import { getIronSession } from "iron-session";
 import type { SessionData } from "./lib/session";
 import { sessionOptions } from "./lib/session";
 
-const PUBLIC_PATHS = ["/login", "/api/logout", "/_next", "/favicon.ico"];
+const PUBLIC_PATHS = ["/login", "/api/logout", "/api/login-2fa", "/_next", "/favicon.ico"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

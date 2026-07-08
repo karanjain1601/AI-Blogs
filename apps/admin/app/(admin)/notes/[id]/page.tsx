@@ -18,6 +18,7 @@ type NoteDetail = {
   icon: string | null; cover_image: string | null; tags: string[] | null;
   aliases: string[] | null; status: string; blocks: unknown;
   topic_id: string | null; reading_time: number; updated_at: string;
+  preview_token: string;
 };
 
 export async function generateMetadata({
@@ -38,7 +39,7 @@ async function getNote(id: string) {
   const { data } = await q<NoteDetail>(
     supa
       .from("notes")
-      .select("id,slug,title,summary,icon,cover_image,tags,aliases,status,blocks,topic_id,reading_time,updated_at")
+      .select("id,slug,title,summary,icon,cover_image,tags,aliases,status,blocks,topic_id,reading_time,updated_at,preview_token")
       .eq("id", id)
       .single(),
   );
@@ -169,6 +170,26 @@ export default async function EditNotePage({
               {note.reading_time > 0 ? `${note.reading_time} min · ` : ""}
               Updated {new Date(note.updated_at).toLocaleDateString()}
             </div>
+
+            {process.env.NODE_ENV !== "production" ? (
+              <a
+                href={`http://localhost:3000/notes/preview/${note.preview_token}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-xs text-[#5865f2] hover:underline py-1"
+              >
+                ↗ Preview draft
+              </a>
+            ) : (
+              <a
+                href={`${process.env.WEB_URL ?? ""}/notes/preview/${note.preview_token}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-xs text-[#5865f2] hover:underline py-1"
+              >
+                ↗ Preview draft
+              </a>
+            )}
 
             <button
               type="submit"

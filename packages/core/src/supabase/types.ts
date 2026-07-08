@@ -59,6 +59,14 @@ export interface ReactionRow {
   count: number;
 }
 
+export interface PushTokenRow {
+  id: string;
+  token: string;
+  platform: "ios" | "android";
+  created_at: string;
+  last_seen: string;
+}
+
 /** Shape consumed by `createClient<Database>()` from @supabase/supabase-js. */
 export interface Database {
   public: {
@@ -91,6 +99,17 @@ export interface Database {
         Row: ReactionRow;
         Insert: ReactionRow;
         Update: Partial<ReactionRow>;
+      };
+      push_tokens: {
+        Row: PushTokenRow;
+        Insert: {
+          id?: string;
+          token: string;
+          platform: "ios" | "android";
+          created_at?: string;
+          last_seen: string;
+        };
+        Update: Partial<PushTokenRow>;
       };
     };
     Views: Record<string, never>;

@@ -2,14 +2,21 @@
   "expo": {
     "name": "Engineering Notes",
     "slug": "engineering-notes",
-    "scheme": "engnotes",
+    "scheme": "noteskb",
     "version": "0.0.1",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "plugins": ["expo-router"],
-    "ios": { "supportsTablet": true },
-    "android": {},
+    "plugins": ["expo-router", "expo-notifications"],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSUserNotificationUsageDescription": "Receive updates when new notes are published."
+      }
+    },
+    "android": {
+      "permissions": ["RECEIVE_BOOT_COMPLETED"]
+    },
     "web": { "bundler": "metro" }
   }
 }

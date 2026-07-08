@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { Block } from "@notes/blocks";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -42,6 +42,8 @@ export function NoteJsonEditor({ initialBlocks, onSave, saving }: Props) {
   );
   const [parseError, setParseError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = useCallback((v: string | undefined) => {
     const text = v ?? "[]";
@@ -79,6 +81,31 @@ export function NoteJsonEditor({ initialBlocks, onSave, saving }: Props) {
     }
   }, [value, onSave]);
 
+  const handleImageUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setUploading(true);
+      try {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/upload", { method: "POST", body: fd });
+        const data = (await res.json()) as { url?: string; error?: string };
+        if (data.url) {
+          insertBlock({
+            type: "image",
+            src: data.url,
+            alt: file.name.replace(/\.[^.]+$/, ""),
+          });
+        }
+      } finally {
+        setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    },
+    [insertBlock],
+  );
+
   return (
     <div className="flex flex-col h-full">
       {/* Block toolbar */}
@@ -93,6 +120,23 @@ export function NoteJsonEditor({ initialBlocks, onSave, saving }: Props) {
             + {bt.label}
           </button>
         ))}
+        <div className="border-l border-[#2a2e35] ml-1 pl-2 flex items-center">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="px-2 py-1 text-xs bg-[#1a1d22] hover:bg-[#2a2e35] text-[#5865f2] hover:text-[#818cf8] rounded transition-colors disabled:opacity-50 whitespace-nowrap"
+          >
+            {uploading ? "Uploading…" : "↑ Upload image"}
+          </button>
+        </div>
       </div>
 
       {/* Editor */}
