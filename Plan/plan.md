@@ -45,22 +45,28 @@ default** (light toggle, system-aware), fast keyboard nav.
                        │   Supabase (PostgreSQL)   │   single source of truth
                        │   notes / topics / links  │   JSONB blocks + Storage
                        └──────────────────────────┘
-                     read (anon) ▲     ▲     ▲ write (service role, server-only)
-             ┌───────────────────┘     │     └───────────────────┐
-     ┌───────────────┐        ┌────────────────┐        ┌────────────────────┐
-     │  Public Web   │        │   Mobile App   │        │    Admin Site       │
-     │  (Next.js)    │        │  (Expo / RN)   │        │   (Next.js, sep.)   │
-     │  read-only    │        │  read-only     │        │  ONLY writer        │
-     │  Vercel       │        │  iOS + Android │        │  single credential  │
-     └───────────────┘        └────────────────┘        └────────────────────┘
+          read (anon) ▲        ▲        ▲ write (service role, server-only)
+      ┌───────────────┘        │        └──────────────────────────────┐
+┌──────────────┐   ┌────────────────┐   ┌─────────────┐   ┌───────────────────┐
+│  Public Web  │   │  Mobile App    │   │  Admin Site │   │  MCP Server       │
+│  (Next.js)   │   │  (Expo / RN)   │   │  (Next.js)  │   │  (Node.js, local) │
+│  read-only   │   │  read-only     │   │  ONLY writer│   │  Claude ↔ content │
+│  Vercel      │   │  iOS + Android │   │  1 cred     │   │  dev machine only │
+└──────────────┘   └────────────────┘   └─────────────┘   └───────────────────┘
+                                                                    ▲
+                                                           Claude Code (CLI/IDE)
 ```
 
 - **Public web** and **mobile** are read-only consumers using the Supabase **anon key**;
   Row Level Security allows reading only published/evergreen notes.
-- **Admin site** is the sole writer. It holds the Supabase **service-role key server-side**
+- **Admin site** is the sole writer via the browser UI. It holds the Supabase **service-role key server-side**
   and is gated by a **single credential** (see *Admin Site & Authentication*).
-- All three share one **block schema** and content utilities via a monorepo, so the same
-  JSON renders consistently on web and mobile.
+- **MCP server** (`apps/mcp`) is a local Node.js process that exposes the same write surface
+  as the admin site as **MCP tools** — so Claude Code (CLI/IDE) can create, edit, delete, and
+  search notes via natural language on the developer's machine. No extra auth needed; security
+  is the local environment + `.env.local` (service-role key, never committed).
+- All surfaces share one **block schema** and content utilities via a monorepo, so the same
+  JSON renders consistently everywhere.
 
 ---
 
@@ -95,6 +101,7 @@ Services (EAS)** to the App Store / Play Store.
 | Analytics | **Vercel Analytics** | Privacy-friendly, no cookie banner |
 | Comments | **Giscus** | GitHub Discussions-backed, opt-in per note (web) |
 | CI/CD | **GitHub Actions** | Secrets in GitHub; deploy web/admin → Vercel, mobile → EAS |
+| MCP server | **@modelcontextprotocol/sdk** | Expose content CRUD as MCP tools so Claude Code can manage notes directly |
 | Deployment | **Vercel** (web + admin) · **EAS** (mobile) | First-class Next.js + managed mobile builds |
 
 ---
@@ -106,7 +113,8 @@ repo/
 ├── apps/
 │   ├── web/                    # Public reader (Next.js, Vercel) — read-only
 │   ├── admin/                  # Admin CRUD (Next.js, Vercel, single credential) — only writer
-│   └── mobile/                 # Expo React Native reader (iOS + Android) — read-only
+│   ├── mobile/                 # Expo React Native reader (iOS + Android) — read-only
+│   └── mcp/                    # MCP server (Node.js, local dev only) — Claude ↔ content tools
 ├── packages/
 │   ├── blocks/                 # Canonical block schema + Zod types (shared contract)
 │   ├── core/                   # Supabase clients, content utils (wikilinks, transclude, toc)
@@ -414,6 +422,79 @@ path** — it reads these secrets, deploys web + admin to Vercel, and builds mob
 
 ---
 
+## MCP Server — Claude-to-Content Bridge
+
+`apps/mcp` is a local **Model Context Protocol** server that lets Claude Code manage the
+knowledge base directly — no admin UI needed. It runs as a Node.js process on the developer's
+machine, reads `SUPABASE_SERVICE_ROLE_KEY` from a local `.env.local` (never committed), and
+exposes the same write surface as the admin site as structured tools.
+
+### Why it works
+
+MCP runs on **your machine**, so:
+
+- No public endpoint to harden or rate-limit.
+- No separate auth layer — security = the local env + the fact that only you run it.
+- Service-role key stays in `.env.local` just like it would in the admin dev environment.
+- Claude Code connects via `stdio` transport (a local child process); nothing is network-exposed.
+
+### Tools exposed
+
+| Tool | Description |
+| --- | --- |
+| `notes_list` | List notes (filter by topic, status, tag, search query) |
+| `notes_get` | Get full note content and metadata by slug |
+| `notes_create` | Create a new note (title, topic, summary, tags, blocks JSON, status) |
+| `notes_update` | Update content or metadata of an existing note |
+| `notes_delete` | Delete a note permanently |
+| `notes_publish` | Change note status (`draft → published → evergreen`) |
+| `topics_list` | List topic tree |
+| `topics_create` | Create a new topic (with parent, icon, sort order) |
+| `topics_update` | Rename / reparent a topic |
+| `topics_delete` | Delete a leaf topic |
+| `media_upload` | Upload a local file to Supabase Storage, returns CDN URL |
+| `search` | Full-text search across note titles, tags, and content |
+| `backlinks_get` | List all notes that link to a given slug |
+
+### Configuration
+
+Add to Claude Code's MCP config (`.claude/mcp_settings.json` or system MCP config):
+
+```json
+{
+  "mcpServers": {
+    "notes-kb": {
+      "command": "node",
+      "args": ["apps/mcp/dist/index.js"],
+      "cwd": "/path/to/repo",
+      "env": {
+        "SUPABASE_URL": "<your-supabase-url>",
+        "SUPABASE_SERVICE_ROLE_KEY": "<your-service-role-key>"
+      }
+    }
+  }
+}
+```
+
+Or run via `pnpm --filter @notes/mcp start` which reads from `apps/mcp/.env.local`.
+
+### Save pipeline (same as admin)
+
+On `notes_create` / `notes_update`, the MCP server runs the same save pipeline as the admin
+UI: recompute `reading_time`, parse `[[links]]`/`![[embeds]]` into `note_links`, snapshot a
+revision into `note_revisions`, and optionally trigger the web app's ISR revalidation webhook.
+
+### Example workflow from Claude Code
+
+```text
+User: "Create a note about Redis data structures in the Databases topic"
+→ Claude calls topics_list to find topic slug
+→ Claude calls notes_create with structured blocks JSON
+→ Note is live in Supabase; web app revalidates within 60s
+```
+
+---
+
 ## Security Model
 
 ### Row Level Security (Supabase)
@@ -548,13 +629,14 @@ CREATE POLICY "no_public_write" ON notes
 - [ ] **MermaidBlock — diagram + source together** (tabs default; stacked/split available)
 - [ ] Sidebar topic tree + breadcrumbs; note page (nested `/notes/[...slug]`) with ISR; **dark theme + toggle**
 
-### Phase 2 — Admin site + auth + editor
+### Phase 2 — Admin site + auth + editor + MCP
 
 - [ ] **Single-credential auth** (argon2 hash + **TOTP** + 1h signed cookie), middleware guard, rate limiting
 - [ ] **IP allowlist + Vercel deployment protection (SSO)** as outer gates
 - [ ] Notes/topics CRUD; topic tree manager; **media upload** to Supabase Storage
 - [ ] **BlockNote editor** (slash, drag, icon/cover) + JSON power mode
 - [ ] Save pipeline: reading time, link/embed parsing, **full revision history**, revalidation
+- [ ] **MCP server** (`apps/mcp`) — expose notes/topics CRUD + search as MCP tools so Claude Code can manage content directly; same save pipeline as admin; configure via `.mcp.json`
 
 ### Phase 3 — Knowledge-base layer (Obsidian)
 
