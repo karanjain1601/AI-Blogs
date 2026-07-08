@@ -38,14 +38,34 @@ function remarkCallouts() {
 }
 
 // Allow the class names our directives/footnotes emit through the sanitizer.
+// Also allow data-slug on anchors for hover previews.
 const schema = {
   ...defaultSchema,
   attributes: {
     ...defaultSchema.attributes,
     "*": [...(defaultSchema.attributes?.["*"] ?? []), "className", "id"],
+    a: [...(defaultSchema.attributes?.["a"] ?? []), "href", "data-slug"],
   },
   tagNames: [...(defaultSchema.tagNames ?? []), "section", "div", "span"],
 };
+
+// Adds data-slug to anchors pointing at /notes/... for hover previews
+function rehypeAddSlugAttr() {
+  return (tree: unknown): void => {
+    visit(tree as never, "element", (node: unknown) => {
+      const n = node as {
+        tagName?: string;
+        properties?: Record<string, unknown>;
+      };
+      if (n.tagName !== "a" || !n.properties) return;
+      const href = n.properties.href as string | undefined;
+      if (!href?.startsWith("/notes/")) return;
+      const parts = href.split("/").filter(Boolean);
+      const noteSlug = parts[parts.length - 1];
+      if (noteSlug) n.properties["data-slug"] = noteSlug;
+    });
+  };
+}
 
 // Convert `[[slug|Display]]` wiki-links to normal markdown links. Block-level
 // transclusion (`![[...]]`) is handled separately by the embed-note block.
@@ -70,17 +90,18 @@ function preprocessWikiLinks(md: string): string {
   });
 }
 
-const processor = unified()
-  .use(remarkParse)
-  .use(remarkGfm)
-  .use(remarkDirective)
-  .use(remarkCallouts)
-  .use(remarkRehype)
-  .use(rehypeSanitize, schema)
-  .use(rehypeStringify);
-
 /** Render a markdown string to sanitized HTML (GFM + footnotes + directives). */
 export async function renderMarkdown(md: string): Promise<string> {
-  const file = await processor.process(preprocessWikiLinks(md));
-  return String(file);
+  const preprocessed = preprocessWikiLinks(md);
+  const result = await unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkDirective)
+    .use(remarkCallouts)
+    .use(remarkRehype, { allowDangerousHtml: false })
+    .use(rehypeSanitize, schema)
+    .use(rehypeAddSlugAttr)
+    .use(rehypeStringify)
+    .process(preprocessed);
+  return String(result);
 }

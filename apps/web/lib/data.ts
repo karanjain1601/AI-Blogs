@@ -136,3 +136,100 @@ export function notePath(note: NoteView, topics: TopicView[]): string[] {
 export function notePathHref(note: NoteView, topics: TopicView[]): string {
   return `/notes/${notePath(note, topics).join("/")}`;
 }
+
+export interface NoteLink {
+  slug: string;
+  title: string;
+  summary: string | null;
+}
+
+export interface SearchResult {
+  slug: string;
+  title: string;
+  summary: string | null;
+  topicSlug: string | null;
+}
+
+export async function getBacklinks(noteSlug: string): Promise<NoteLink[]> {
+  if (!supa) return [];
+  const { data: noteRow } = await (supa
+    .from("notes")
+    .select("id")
+    .eq("slug", noteSlug)
+    .maybeSingle() as unknown as Promise<{ data: { id: string } | null; error: unknown }>);
+  if (!noteRow) return [];
+  const { data: linkRows } = await (supa
+    .from("note_links")
+    .select("source_note_id")
+    .eq("target_note_id", noteRow.id) as unknown as Promise<{
+    data: { source_note_id: string }[] | null;
+    error: unknown;
+  }>);
+  if (!linkRows?.length) return [];
+  const ids = linkRows.map((l) => l.source_note_id);
+  const { data: notes } = await (supa
+    .from("notes")
+    .select("slug,title,summary")
+    .in("id", ids) as unknown as Promise<{
+    data: NoteLink[] | null;
+    error: unknown;
+  }>);
+  return notes ?? [];
+}
+
+export async function getOutgoingLinks(noteSlug: string): Promise<NoteLink[]> {
+  if (!supa) return [];
+  const { data: noteRow } = await (supa
+    .from("notes")
+    .select("id")
+    .eq("slug", noteSlug)
+    .maybeSingle() as unknown as Promise<{ data: { id: string } | null; error: unknown }>);
+  if (!noteRow) return [];
+  const { data: linkRows } = await (supa
+    .from("note_links")
+    .select("target_note_id")
+    .eq("source_note_id", noteRow.id) as unknown as Promise<{
+    data: { target_note_id: string }[] | null;
+    error: unknown;
+  }>);
+  if (!linkRows?.length) return [];
+  const ids = linkRows.map((l) => l.target_note_id);
+  const { data: notes } = await (supa
+    .from("notes")
+    .select("slug,title,summary")
+    .in("id", ids) as unknown as Promise<{
+    data: NoteLink[] | null;
+    error: unknown;
+  }>);
+  return notes ?? [];
+}
+
+export async function searchNotes(query: string): Promise<SearchResult[]> {
+  if (!supa || !query.trim()) return [];
+  const q = query.trim();
+  const { data } = await (supa
+    .from("notes")
+    .select("slug,title,summary,topic:topics(slug)")
+    .or(`title.ilike.%${q}%,summary.ilike.%${q}%`)
+    .in("status", ["published", "evergreen"])
+    .limit(20) as unknown as Promise<{
+    data:
+      | {
+          slug: string;
+          title: string;
+          summary: string | null;
+          topic: { slug: string } | { slug: string }[] | null;
+        }[]
+      | null;
+    error: unknown;
+  }>);
+  return (data ?? []).map((row) => {
+    const topic = Array.isArray(row.topic) ? row.topic[0] : row.topic;
+    return {
+      slug: row.slug,
+      title: row.title,
+      summary: row.summary,
+      topicSlug: topic?.slug ?? null,
+    };
+  });
+}

@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Block } from "@notes/blocks";
-import { readingTime } from "../content/reading-time.js";
-import { linkEdges } from "../content/wikilinks.js";
-import type { Database } from "../supabase/types.js";
+import { readingTime } from "../content/reading-time";
+import { linkEdges } from "../content/wikilinks";
+import type { Database } from "../supabase/types";
 
 export interface SavePipelineOptions {
   revalidateUrl?: string;

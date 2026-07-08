@@ -10,6 +10,8 @@ import {
 } from "../../../lib/data";
 import { Breadcrumbs } from "../../../components/Breadcrumbs";
 import { Toc } from "../../../components/Toc";
+import { BacklinksPanel } from "../../../components/BacklinksPanel";
+import { HoverPreviewProvider } from "../../../components/HoverPreviewProvider";
 
 export const revalidate = 60;
 
@@ -36,7 +38,10 @@ export default async function NotePage({
 }) {
   const { slug } = await params;
   const noteSlug = slug[slug.length - 1];
-  const [note, topics] = await Promise.all([getNoteBySlug(noteSlug), getTopics()]);
+  const [note, topics] = await Promise.all([
+    getNoteBySlug(noteSlug),
+    getTopics(),
+  ]);
   if (!note) notFound();
 
   const chain = topicChain(note.topicSlug, topics);
@@ -46,17 +51,21 @@ export default async function NotePage({
     : null;
 
   return (
-    <div className="nb-note-layout">
-      <article className="nb-article">
-        <Breadcrumbs chain={chain} title={note.title} />
-        <h1 className="nb-title">{note.title}</h1>
-        <p className="nb-meta">
-          {note.readingTime} min read
-          {updated ? ` · Updated ${updated}` : ""}
-        </p>
-        <BlockRenderer items={prepared} />
-      </article>
-      <Toc blocks={note.blocks} />
-    </div>
+    <HoverPreviewProvider>
+      <div className="nb-note-layout">
+        <article className="nb-article">
+          <Breadcrumbs chain={chain} title={note.title} />
+          <h1 className="nb-title">{note.title}</h1>
+          <p className="nb-meta">
+            {note.readingTime > 0 ? `${note.readingTime} min read` : ""}
+            {note.readingTime > 0 && updated ? " · " : ""}
+            {updated ? `Updated ${updated}` : ""}
+          </p>
+          <BlockRenderer items={prepared} />
+          <BacklinksPanel noteSlug={noteSlug} />
+        </article>
+        <Toc blocks={note.blocks} />
+      </div>
+    </HoverPreviewProvider>
   );
 }
