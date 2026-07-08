@@ -97,6 +97,7 @@ const consensusBlocks = parseBlocks([
 
 export const FIXTURE_NOTES: NoteView[] = [
   {
+    id: "fixture-database-indexing",
     slug: "database-indexing",
     title: "Database Indexing",
     summary: "How B-tree indexes speed up reads and what they cost on writes.",
@@ -107,6 +108,7 @@ export const FIXTURE_NOTES: NoteView[] = [
     readingTime: readingTime(indexingBlocks),
   },
   {
+    id: "fixture-consensus",
     slug: "consensus",
     title: "Consensus",
     summary: "Why distributed replicas need to agree, and how quorums make that safe.",

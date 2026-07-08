@@ -6,7 +6,9 @@ import { getNotes, getTopics } from "../lib/data";
 import { Sidebar } from "../components/Sidebar";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { CommandPalette } from "../components/CommandPalette";
+import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
+import { ServiceWorkerRegister } from "../components/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
   title: {
@@ -31,25 +33,22 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <div className="nb-main-col">
             <header className="nb-header">
               <Link href="/search" className="nb-search-link">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden="true"
-                >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" />
                   <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
                 <span>Search</span>
                 <kbd className="nb-kbd">⌘K</kbd>
               </Link>
+              <Link href="/graph" className="nb-header-link">Graph</Link>
               <ThemeToggle />
             </header>
             <main className="nb-main">{children}</main>
           </div>
         </div>
         <CommandPalette />
+        <Analytics />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

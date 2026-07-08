@@ -775,3 +775,186 @@ html.dark .shiki span {
 .nb-search-result:hover { border-color: var(--nb-accent); background: var(--nb-hover); }
 .nb-search-result-title { font-size: 0.9rem; font-weight: 500; color: var(--nb-fg); }
 .nb-search-result-summary { font-size: 0.8rem; color: var(--nb-muted); }
+
+/* ── Reactions ──────────────────────────────────────────────── */
+.nb-reactions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--nb-border);
+}
+.nb-reaction {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--nb-border);
+  border-radius: 9999px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+.nb-reaction:hover { border-color: var(--nb-accent); background: var(--nb-hover); }
+.nb-reaction-active { border-color: var(--nb-accent); background: var(--nb-hover); }
+.nb-reaction-count { font-size: 0.75rem; color: var(--nb-muted); }
+
+/* ── Giscus ─────────────────────────────────────────────────── */
+.nb-giscus { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--nb-border); }
+
+/* ── Export button ──────────────────────────────────────────── */
+.nb-export-btn {
+  flex-shrink: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  color: var(--nb-muted);
+  border: 1px solid var(--nb-border);
+  border-radius: 0.375rem;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: monospace;
+}
+.nb-export-btn:hover { color: var(--nb-fg); border-color: var(--nb-accent); }
+.nb-title-row { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem; }
+.nb-title-row .nb-title { margin-bottom: 0; flex: 1; }
+
+/* ── Collection block ───────────────────────────────────────── */
+.nb-collection {
+  border: 1px solid var(--nb-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.nb-collection-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.nb-collection-view {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nb-muted);
+  border: 1px solid var(--nb-border);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.375rem;
+}
+.nb-collection-filter { font-size: 0.8rem; color: var(--nb-accent); }
+.nb-collection-link {
+  font-size: 0.875rem;
+  color: var(--nb-accent);
+  text-decoration: none;
+}
+.nb-collection-link:hover { text-decoration: underline; }
+
+/* ── Preview banner ─────────────────────────────────────────── */
+.nb-preview-banner {
+  background: #2e1a0a;
+  border: 1px solid #8b4513;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.8rem;
+  color: #e3b341;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Graph ──────────────────────────────────────────────────── */
+.nb-graph-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 3.5rem);
+  overflow: hidden;
+  padding: 0 1.5rem;
+}
+.nb-graph-title { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0.25rem; }
+.nb-graph-subtitle { font-size: 0.8rem; color: var(--nb-muted); margin-bottom: 0.5rem; }
+.nb-graph-wrap {
+  flex: 1;
+  position: relative;
+  border: 1px solid var(--nb-border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--nb-bg);
+  margin-bottom: 1rem;
+}
+.nb-graph-wrap canvas { display: block; }
+.nb-graph-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--nb-muted);
+  background: color-mix(in srgb, var(--nb-surface) 90%, transparent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.nb-graph-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--nb-muted);
+  font-size: 0.875rem;
+}
+
+/* ── Author ─────────────────────────────────────────────────── */
+.nb-author-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.625rem 0.25rem 0.25rem;
+  border: 1px solid var(--nb-border);
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: border-color 0.15s;
+  margin-bottom: 0.75rem;
+}
+.nb-author-badge:hover { border-color: var(--nb-accent); }
+.nb-author-avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.nb-author-initials {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--nb-accent);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nb-author-name { font-size: 0.8rem; color: var(--nb-fg); font-weight: 500; }
+.nb-author-page { max-width: 720px; padding: 2rem 1rem; }
+.nb-author-profile { margin-bottom: 2rem; }
+.nb-author-bio { font-size: 0.9rem; color: var(--nb-muted); margin: 0.75rem 0; line-height: 1.6; }
+.nb-author-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.75rem; }
+.nb-author-link { font-size: 0.8rem; color: var(--nb-accent); text-decoration: none; }
+.nb-author-link:hover { text-decoration: underline; }
+.nb-author-notes { margin-top: 2rem; }
+.nb-section-heading { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+.nb-note-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.nb-note-link { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.625rem 0.875rem; border: 1px solid var(--nb-border); border-radius: 0.5rem; text-decoration: none; transition: border-color 0.15s; }
+.nb-note-link:hover { border-color: var(--nb-accent); }
+.nb-note-link-title { font-size: 0.9rem; font-weight: 500; color: var(--nb-fg); }
+.nb-note-link-summary { font-size: 0.8rem; color: var(--nb-muted); }
+
+/* ── Offline ─────────────────────────────────────────────────── */
+.nb-offline { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; gap: 0.75rem; color: var(--nb-muted); }
+.nb-offline h1 { font-size: 1.5rem; font-weight: 600; color: var(--nb-fg); }
+
+/* ── Header graph link ────────────────────────────────────────── */
+.nb-header-link { font-size: 0.8rem; color: var(--nb-muted); text-decoration: none; padding: 0.25rem 0.5rem; border-radius: 0.375rem; transition: color 0.15s; }
+.nb-header-link:hover { color: var(--nb-fg); }
