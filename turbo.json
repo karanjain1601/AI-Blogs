@@ -20,10 +20,10 @@
         "GITHUB_BACKUP_TOKEN",
         "GITHUB_BACKUP_REPO",
         "GITHUB_BACKUP_BRANCH",
-        "ADMIN_USERNAME",
-        "ADMIN_PASSWORD_HASH",
-        "SESSION_SECRET",
-        "ADMIN_TOTP_SECRET",
+        "AUTH_GOOGLE_ID",
+        "AUTH_GOOGLE_SECRET",
+        "AUTH_SECRET",
+        "ADMIN_EMAIL",
         "WEB_REVALIDATE_URL"
       ]
     },

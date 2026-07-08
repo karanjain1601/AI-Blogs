@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { requireSession } from "@/lib/session";
+import { signOut } from "../../auth";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: "⬡" },
@@ -9,13 +9,16 @@ const NAV = [
   { href: "/media", label: "Media", icon: "🖼" },
 ];
 
+async function handleSignOut() {
+  "use server";
+  await signOut({ redirectTo: "/login" });
+}
+
 export default async function AdminLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  await requireSession();
-
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -38,13 +41,15 @@ export default async function AdminLayout({
         </nav>
 
         <div className="px-2 py-3 border-t border-[#2a2e35]">
-          <a
-            href="/api/logout"
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#8b919a] hover:text-[#f04040] hover:bg-[#1a1d22] rounded-lg transition-colors"
-          >
-            <span className="text-base leading-none">↩</span>
-            Sign out
-          </a>
+          <form action={handleSignOut}>
+            <button
+              type="submit"
+              className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-[#8b919a] hover:text-[#f04040] hover:bg-[#1a1d22] rounded-lg transition-colors"
+            >
+              <span className="text-base leading-none">↩</span>
+              Sign out
+            </button>
+          </form>
         </div>
       </aside>
 
