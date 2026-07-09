@@ -7,6 +7,7 @@ const NAV = [
   { href: "/notes", label: "Notes", icon: "📝" },
   { href: "/topics", label: "Topics", icon: "🗂" },
   { href: "/media", label: "Media", icon: "🖼" },
+  { href: "/backup", label: "Backup", icon: "📦" },
 ];
 
 async function handleSignOut() {
