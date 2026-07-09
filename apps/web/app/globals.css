@@ -419,6 +419,7 @@ html.dark .shiki span {
 }
 .nb-figure img,
 .nb-figure video {
+  width: 100%;
   max-width: 100%;
   border-radius: 8px;
 }
@@ -426,6 +427,12 @@ html.dark .shiki span {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 0.5rem;
+}
+.nb-gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
 }
 .nb-embed-video {
   position: relative;
