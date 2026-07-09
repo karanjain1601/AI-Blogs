@@ -64,3 +64,9 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 !.vscode/mcp.json
+
+# ───────────────────────── claude code ──────────────────────────
+.claude/
+
+# ───────────────────────── content ──────────────────────────────
+content/

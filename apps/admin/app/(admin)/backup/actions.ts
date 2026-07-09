@@ -100,8 +100,9 @@ function notePath(note: Pick<RawNote, "slug" | "topic">) {
 // ── Frontmatter parser ────────────────────────────────────────────────────────
 
 function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: string } {
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!match) return { data: {}, body: raw };
+  const stripped = raw.replace(/^﻿/, ""); // strip UTF-8 BOM written by PowerShell
+  const match = stripped.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!match) return { data: {}, body: stripped };
   const [, fm, body] = match;
   const data: Record<string, unknown> = {};
   for (const line of fm.split("\n")) {
