@@ -25,6 +25,8 @@ function noteToMarkdown(note: RawNote): string {
   if (note.topic) lines.push(`topic: "${note.topic.slug}"`);
   lines.push(`status: "${note.status}"`);
   if (note.updated_at) lines.push(`updated: "${note.updated_at.slice(0, 10)}"`);
+  // base64 blocks JSON — used by restore to reconstruct the exact block structure
+  lines.push(`blocks_json: "${Buffer.from(JSON.stringify(note.blocks)).toString("base64")}"`);
   lines.push("---", "", `# ${note.title}`, "", blocksToMarkdown(note.blocks));
   return lines.join("\n");
 }
