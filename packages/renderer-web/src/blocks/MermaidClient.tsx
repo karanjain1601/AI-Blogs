@@ -28,7 +28,11 @@ export function MermaidClient({
 
     async function render() {
       try {
-        const mermaid = (await import("mermaid")).default;
+        // Retry once — dynamic chunk loading can fail transiently on Vercel CDN
+        const mermaid = await import("mermaid").then((m) => m.default).catch(async () => {
+          await new Promise((r) => setTimeout(r, 800));
+          return (await import("mermaid")).default;
+        });
         const isDark = document.documentElement.classList.contains("dark");
         mermaid.initialize({
           startOnLoad: false,
